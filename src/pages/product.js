@@ -1,6 +1,7 @@
 import Header from '../components/header.js';
 import Footer from '../components/footer.js';
 import data from '../data.json';
+import NotFoundPage from './notFound.js';
 
 export const addDot = str => {
 	const newStr = str.split('')
@@ -11,8 +12,8 @@ export const addDot = str => {
 
 let showMore = true;
 
-const Product = (id) => {
-	const currentBook = data.find(book => book.id === id);
+const Product = (param) => {
+	const currentBook = data.find(book => book.id === Number(param.data.id));
 	const {name, images, original_price: original, new_price, quantity_sold, rating_average, description, short_description} = currentBook;
 
 	return `
@@ -24,15 +25,17 @@ const Product = (id) => {
 				</div>
 				<div class="flex p-2 m-2">
 					<div class="basis-2/5 bg-white m-2 rounded">
-		                <img
-		                    src="${images[0]}"
-		                    alt=""
-		                    class="object-cover w-[400px] rounded aspect-square"
-		                />
-		                <div class="flex mt-2 justify-around">
+						<div class="text-center items-centers">
+			                <img
+			                    src="${images[0]}"
+			                    alt=""
+			                    class="main-img object-cover w-[450px] h-[400px] rounded hover:scale-[1.1] transition duration-300"
+			                />
+						</div>
+		                <div class="imgContainer flex mt-2 justify-around">
 		                ${images.map(image => {
 		                	return `
-		                		<img class="w-[150px] mr-2" src=${image} />
+		                		<img class="imgClass w-[150px] mr-2" src=${image} />
 		                	`
 		                }).join(' ')}
 		                </div>
@@ -56,11 +59,11 @@ const Product = (id) => {
 		            	</div>
 		            	<div class="mx-4 py-2">
 		            		<h4 class="text-lg font-bold mx-2">Mô tả sản phẩm</h4>
-		            		<p class="py-2">${showMore ? description : description.slice(0, 200) + ' ...'}
-		            			<button class="border rounded h-10 w-[100px] hover:bg-orange-200" >
-									${showMore ? 'Hide' : 'More'}
-								<button>
+		            		<p id="para" class="py-2">
+		            			${showMore ? description : description.slice(0, 300) + ' ...'}
+		            			<button class="inline-block">${showMore ? 'Hide' : 'More'}</button>
 		            		</p>
+
 		            	</div>
 		            	<div class="border p-2">
 		            		<h4 class="font-bold p-2">Số lượng</h4>
@@ -83,3 +86,4 @@ const Product = (id) => {
 }
 
 export default Product;
+

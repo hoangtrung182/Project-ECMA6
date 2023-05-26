@@ -1,3 +1,4 @@
+
 const NotFoundPage = function () {
     return /*html*/`
     <div class="bg-gray-100 h-screen flex flex-col justify-center">
