@@ -64,3 +64,10 @@ imgContainer.addEventListener('mouseover', function(e) {
 	main_img.src = hover.src;
 })
 
+
+const section1 = document.querySelector('.section-1'); //section-1: header 
+const btnGoTop = document.querySelector('.gotop');
+
+btnGoTop.addEventListener('click', function() {
+	section1.scrollIntoView({ behavior: 'smooth' })
+})

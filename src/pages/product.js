@@ -2,6 +2,7 @@ import Header from '../components/header.js';
 import Footer from '../components/footer.js';
 import data from '../data.json';
 import NotFoundPage from './notFound.js';
+import { up } from '../components/logo.js';
 
 export const addDot = str => {
 	const newStr = str.split('')
@@ -19,7 +20,7 @@ const Product = (param) => {
 	return `
 		<div>
 			${Header()}
-			<section class="bg-slate-200">
+			<section class="section-2 bg-slate-200">
 				<div class="w-full h-8 leading-8 text-medium bg-yellow-500 text-white px-2">
 					<span>Home > Product > ${name}</span>
 				</div>
@@ -29,15 +30,17 @@ const Product = (param) => {
 			                <img
 			                    src="${images[0]}"
 			                    alt=""
-			                    class="main-img object-cover w-[450px] h-[400px] rounded hover:scale-[1.1] transition duration-300"
+			                    class="main-img object-cover w-[450px] h-[400px] cursor-pointer rounded hover:scale-[1.1] transition duration-300"
 			                />
 						</div>
-		                <div class="imgContainer flex mt-2 justify-around">
-		                ${images.map(image => {
+		                <div class="imgContainer flex mt-2 justify-center border">
+		                ${
+		                	images.map(image => {
 		                	return `
-		                		<img class="imgClass w-[150px] mr-2" src=${image} />
+		                		<img class="imgClass w-[150px] mr-2 border-2 p-2 cursor-pointer" src=${image} />
 		                	`
-		                }).join(' ')}
+		                	}).join(' ')
+		                }
 		                </div>
 		            </div>
 		            <div class="basis-3/5 bg-white m-2 rounded">
@@ -80,6 +83,24 @@ const Product = (param) => {
 		            </div>
 	            </div>
             </section>
+            <section class="bg-slate-200 p-4 my-6">
+            	<h2 class="text-3xl font-thin py-2 px-4">Sản phẩm khác</h2>
+            	<div class="flex items-center justify-between m-auto">
+            		${
+            			data.filter(item => item !== currentBook).map(item => {
+            				return `
+	            			<a href="/product/${item.id}" class="block border-2 rounded-md p-2 bg-white hover:bg-yellow-200 hover:scale-[1.1] transition duration-300">
+	            				<img src="${item.images[0]}" class="w-[150px] mr-2 p-2" />
+	            				<p class="text-[#ef4444] text-center text-sm mx-2 font-semibold">${addDot(`${item.new_price}`)} VND</p>
+	            			</a>`
+            			}).join('')
+            		}
+            	</div>	
+            </section>
+            <button class="gotop flex items-center justify-center h-10 fixed bottom-10 right-5 w-[120px] px-2 rounded-lg bg-transparent border-2 outline-none hover:bg-neutral-700 hover:text-white">
+            	<p>Up</p>
+            	${up}
+            </button>
 			${Footer()}
 		</div>
 	`

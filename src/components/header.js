@@ -3,7 +3,7 @@ import { home, list, about, search, cart } from './logo.js';
 const Header = function() {
 	return (
 	`
-		<header class="flex items-center h-16 w-full bg-slate-50">
+		<header class="section-1 flex items-center h-16 w-full bg-slate-50">
 			<div class="px-4">
 				<a href="/">
 					<img class="w-14" src="https://salt.tikicdn.com/ts/upload/e4/49/6c/270be9859abd5f5ec5071da65fab0a94.png" alt="">
