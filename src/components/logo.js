@@ -38,7 +38,27 @@ const up = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 
 </svg>
 `;
 
+
+const addDot = str => {
+  const newStr = str.split('')
+          .slice(0, -3)
+          .join('') + '.' + str.slice(-3)
+  return newStr;
+}
+
+const convertTitleCase = function(title) {
+  const capitalize = str => str[0].toUpperCase() + str.slice(1);
+      
+  const newTitle = title
+      .toLowerCase()
+      .split(' ')
+      .map(word => capitalize(word))
+      .join(' ')
+  
+  return newTitle;
+}
+
 export {
   home, list, about, star, cart, search,
-  up
+  up, addDot, convertTitleCase
 }
