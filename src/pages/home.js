@@ -1,66 +1,63 @@
 import Header from '../components/header.js';
 import Footer from '../components/footer.js';
-import { books } from '../../data.json';
 import ProductList from '../components/ProductList.js';
 import { star, addDot } from '../components/logo.js';
 import { useState, useEffect } from '../lib';
+import { getProducts } from '../api/products.js';
+import { Cart } from '../api/oop.js';
+
 
 const Home = () => {
 	const [data, setData] = useState([]);
 	const [title, setTitle] = useState("");
 
 	useEffect(() => {
-		const getData = function() {
-			fetch('http://localhost:3000/books')
-				.then(res => res.json())
-				.then(value => setData(value))
-				.catch(err => console.log(err))
+		const getData = async () => {	
+			const res = await getProducts();
+			setData(res.data);
 		}
 		getData();
+	}, [])
 
+	useEffect(() => {
 		const filterContainer = document.querySelector('.filter-container');
 		const filterTitle = document.querySelector('#filter-title');
 
 		filterContainer.addEventListener('click', function(e) {
 			const { filter } = e.target.dataset;
-			// filterTitle.innerHTML = title;
-
+			const text = e.target.innerText;
 			switch(filter) {
 				case "best": 
 					const bestPrices = [...data].sort((a, b) => {
 						return (b.quantity_sold?.value || 0) - (a.quantity_sold?.value || 0)
 					})
 					setData(bestPrices);
-					setTitle(e.target.innerText);					
-					// setActive(!active)
+					setTitle(text);					
 					break;
 				case "maxPrice":
 					const descending = [...data].sort((a, b) => {
 						return b.new_price - a.new_price
 					})
-
 					setData(descending);
-					setTitle(e.target.innerText);							
+					setTitle(text);							
 					break;
 				case "minPrice" :
 					const ascending = [...data].sort((a, b) => {
 						return a.new_price - b.new_price
 					})
-
 					setData(ascending);
-					setTitle(e.target.innerText);					
+					setTitle(text);					
 					break;
 				case "rating": 
 					const ratingStar = [...data].sort((a, b) => {
 						return b.rating_average - a.rating_average
 					})
-
 					setData(ratingStar);
-					setTitle(e.target.innerText);					
+					setTitle(text);					
 					break;
 				case "popular":
-					setData(products);
-					setTitle(e.target.innerText);					
+					setData(data);
+					setTitle(text);					
 					break;
 				default: 
 					return;
@@ -74,7 +71,6 @@ const Home = () => {
 
 		const searchInput = document.querySelector('#search__input');
 		const searchBtn = document.querySelector('#search__btn');
-		// console.log(searchInput);
 
 		searchBtn.addEventListener('click', function(e) {
 			e.preventDefault();
@@ -98,14 +94,27 @@ const Home = () => {
 			})
 
 			if(searchInput.value === '') {
-				setData(products)
+				getData();
 			} else {
 				setData(filterItems);
 			}
 
 			setTitle(searchInput.value);
 		})
-	})
+	});
+
+	useEffect(() => {
+		const trung = new Cart();
+
+		const container = document.querySelector('.homeContainer');
+		container.addEventListener('click', function(e) {
+			if(e.target.classList.contains('btn-orederOut')) {
+				const { id } = e.target.dataset;
+				trung.addProduct(data, +id);
+				sessionStorage.setItem('products', JSON.stringify(trung.cart))
+			}
+		})
+	}, )
 
 	return (`
 		<div>
@@ -160,10 +169,10 @@ const Home = () => {
 							<p class="h-8 w-[100px] bg-black text-white rounded mx-4 px-2 cursor-pointer border hover:bg-white hover:text-black" data-filter="minPrice">Giá Thấp</p>
 							<p class="h-8 w-[100px] bg-black text-white rounded mx-4 px-2 cursor-pointer border hover:bg-white hover:text-black" data-filter="rating">Đánh giá</p>
 						</div>
-						<div class="bg-white rounded">
+						<div class="homeContainer bg-white rounded">
 							<span id="filter-title" class="p-4"></span>
 							<div class="grid grid-cols-4 gap-3">
-					            ${ 
+					            ${
 					            	data.map((book) => {
 					            		return ProductList({ book })
 					            	}).join("")

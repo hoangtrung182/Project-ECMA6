@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"vite\" \"json-server -w build.json\"",
+    "dev": "concurrently \"vite\" \"json-server -w db.json\"",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -15,6 +15,8 @@
     "vite": "^4.3.2"
   },
   "dependencies": {
-    "navigo": "^8.11.1"
+    "axios": "^1.4.0",
+    "navigo": "^8.11.1",
+    "uuid": "^9.0.0"
   }
 }
