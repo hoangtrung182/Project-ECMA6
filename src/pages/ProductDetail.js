@@ -3,19 +3,15 @@ import Footer from '../components/footer.js';
 import OtherProducts from '../components/OtherProducts.js';
 import NotFoundPage from './notFound.js';
 import { star, up, convertTitleCase, addDot } from '../components/logo.js';
-import { useEffect, useState } from '../lib';
+import { useEffect, useState, router } from '../lib';
 import { getProduct, getProducts } from '../api/products.js';
+import { addProductCart } from '../api/cart.js';
 
 const ProductDetail = ({ id }) => {
 	const [product, setProduct] = useState({});
 	const [allBooks, setAllBooks] = useState([]);
-	const [showMore, setShowmore] = useState(false);
-	const [ordered, setOrder] = useState([]);
-
-	useEffect(() => {
-		const listItem = JSON.parse(sessionStorage.getItem('products')) || [];
-		setOrder(listItem);		
-	}, [])
+	const [showMore, setShowmore] = useState(true);
+	const [count, setCount] = useState(1);
 
 	const displayMore = (state) => {
 		setShowmore(!state)
@@ -24,8 +20,8 @@ const ProductDetail = ({ id }) => {
 	useEffect(() => {
 		const getData = async () => {
 			try {
-				const res = await getProduct(id)
-				setProduct(res.data)
+				const res = await getProducts()
+				setAllBooks(res.data)
 			} catch(err) {
 				console.log(err)
 			}
@@ -36,8 +32,8 @@ const ProductDetail = ({ id }) => {
 	useEffect(() => {
 		const getData = async () => {
 			try {
-				const res = await getProducts()
-				setAllBooks(res.data)
+				const res = await getProduct(id)
+				setProduct(res.data)
 			} catch(err) {
 				console.log(err)
 			}
@@ -59,20 +55,45 @@ const ProductDetail = ({ id }) => {
 		// })
 		const section1 = document.querySelector('.section-1'); //section-1: header 
 		const btnGoTop = document.querySelector('.gotop');
+		const showBtn = document.querySelector('#btn-show');
+		const btnDecrease = document.querySelector('.btn-decrease');
+		const btnIncrease = document.querySelector('.btn-increase');
 
 		btnGoTop.addEventListener('click', function() {
 			section1.scrollIntoView({ behavior: 'smooth' })
 		})
 
-		const showBtn = document.querySelector('#btn-show');
-		showBtn.addEventListener('click', displayMore.bind(null, showMore))
+		// Show more description
+		// showBtn.addEventListener('click', () => displayMore(showMore)));
+		showBtn.addEventListener('click', displayMore.bind(null, showMore));
+
+		// Count products
+		btnDecrease.addEventListener('click', () => {
+			if(count <= 0) {
+				return 0
+			};
+			setCount(count - 1);
+		})
+
+		btnIncrease.addEventListener('click', () => {
+			setCount(count + 1);
+		})
 
 
+		// Add product to cart
 		const btnOrder = document.querySelector('.btn-order');
-		btnOrder.addEventListener('click', function(e) {
-			const newProduct = allBooks.find(item => item.id === +id);
-			
-			sessionStorage.setItem('products', JSON.stringify([...ordered, newProduct]));
+		btnOrder.addEventListener('click',async function() {
+			const newProduct = allBooks.find(item => item.id === +id)
+			const packProduct = {...newProduct, quantity: count};
+
+			try {
+				await addProductCart(packProduct);
+				alert("Add product seccesfully");
+				router.navigate(`/product/${id}`);
+				// console.log('Thanh cong sp')
+			} catch (err) {
+				console.log(err)
+			}
 		})
 
 	})
@@ -127,9 +148,9 @@ const ProductDetail = ({ id }) => {
 	            	<div class="border p-2">
 	            		<h4 class="font-bold p-2">Số lượng</h4>
 	            		<div class="flex items-center">
-		            		<button class="h-10 w-[40px] border hover:bg-orange-200"> - </button>
-		            		<span class="inline-block leading-[40px] text-center h-10 w-[40px] border">1</span>
-		            		<button class="h-10 w-[40px] border hover:bg-orange-200"> + </button>
+		            		<button class="btn-decrease h-10 w-[40px] border hover:bg-orange-200"> - </button>
+		            		<span class="inline-block leading-[40px] text-center h-10 w-[40px] border">${count}</span>
+		            		<button class="btn-increase h-10 w-[40px] border hover:bg-orange-200"> + </button>
 	            		</div>
 	            	</div>
 	            	<div class="p-4 flex justify-around items-center">
@@ -150,7 +171,7 @@ const ProductDetail = ({ id }) => {
         	</div>	
         </section>
         
-        <button class="gotop flex items-center justify-center h-10 fixed bottom-10 right-5 w-[120px] px-2 rounded-lg bg-transparent border-2 outline-none hover:bg-neutral-700 hover:text-white">
+        <button class="gotop flex justify-left text-sm h-8 fixed bottom-10 right-5 w-[120px] px-2 rounded-lg border-2 outline-none opacity-60 hover:bg-neutral-700 hover:text-white">
         	<p>Back to Top</p>
         	${up}
         </button>

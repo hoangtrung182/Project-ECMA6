@@ -1,57 +1,62 @@
 import { useState, useEffect } from '../lib';
 import { Cart } from '../api/oop.js';
+import { getProductsCart, deleteProductCart } from '../api/cart.js';
 
 const CartOrder = () => {
 	const [cart, setCart] = useState([]);
 
-	useEffect(() => {
-		const listItem = JSON.parse(sessionStorage.getItem('products')) || [];
-		setCart(listItem);		
+	useEffect(async () => {
+		try {
+			const res = await getProductsCart();
+			setCart(res.data)
+		} catch(err) {
+			console.log(err)
+		}
 	}, [])
-
-	// if(cart.length <= 0) {
-	// 	return `<h2>Nothing</h2>`
-	// }
 
 	useEffect(() => {
 		const tableContainer = document.querySelector('.tableContainer');
-		tableContainer.addEventListener('click', function(e) {
+		tableContainer.addEventListener('click', async function(e) {
 			e.preventDefault();
 			if(e.target.classList.contains('btn-delete')) {
+
 				const { id } = e.target.dataset;
-				const newCart = cart.filter((item, index) => index !== +id);
-				setCart(newCart);
-				sessionStorage.setItem('products', JSON.stringify(newCart));
+				const newCarts = cart.filter((item) => item.id !== +id);
+
+				const confirm = window.confirm('Bạn có chắc muốn xóa sản phẩm này?');
+				if(confirm) {
+					try {
+						await deleteProductCart(id)
+						setCart(newCarts);	
+					} catch(err) {
+						console.log(err)
+					}
+				}
 			}
 		});
+
 		const sum = () => {
-			const total = cart.reduce((acc, num) => acc + +(num.new_price), 0);
+			const total = cart.reduce((acc, num) => acc + +(num.new_price * num.quantity), 0);
 			return total;
 		};
-
-		document.querySelector('#sumMoney').innerHTML = `Tổng thành tiền: ${sum()} VND`
+		document.querySelector('#sumMoney').innerHTML = `Tổng thành tiền: ${sum()} VND`;
 	})
-
 	return `
-
 		<button class="btn-delete inline-block rounded bg-indigo-600 px-4 py-2 hover:bg-red-500 text-xs font-medium text-white hover:bg-indigo-700">
 			<a href="/">Back</a>
 		</button>
 		<div>
-			<h2 class="text-center font-bold text-purple-800 text-5xl my-10">Dashboard</h2>
+			<h2 class="text-center font-bold text-purple-800 text-5xl my-10">CART</h2>
 		</div>
 		<div class="bg-slate-200">
-		  <table class="min-w-1000px divide-y-2 m-auto divide-gray-200 bg-white text-sm">
+		  <table class="min-w-1200px divide-y-2 m-auto divide-gray-200 bg-white text-sm">
 		    <thead class="ltr:text-left rtl:text-right">
 		      <tr>
 		        <th class="whitespace-nowrap px-4 py-2 font-bold text-purple-800">
 		          Tên sản phẩm
 		        </th>
 		        <th class="whitespace-nowrap px-4 py-2 font-bold text-purple-800">
-		          Giá gốc
-		        </th>
-		        <th class="whitespace-nowrap px-4 py-2 font-bold text-purple-800">
-		          Giá khuyến mãi
+		          Giá
 		        </th>
 		        <th class="whitespace-nowrap px-4 py-2 font-bold text-purple-800">
 		          Đánh giá
@@ -59,6 +64,9 @@ const CartOrder = () => {
 		        <th class="whitespace-nowrap px-4 py-2 font-bold text-purple-800">
 		        	Thao tác
 		        	</th>
+		       	<th class="whitespace-nowrap px-4 py-2 font-bold text-purple-800">
+		          Số lượng
+		       	</th>
 		      </tr>
 		    </thead>
 		    <tbody class="tableContainer divide-y divide-gray-200">
@@ -67,22 +75,22 @@ const CartOrder = () => {
 		    		return `
 		    			 <tr class="odd:bg-gray-50">
 					        <td class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-					         ${item.name}
+					         ${item.name.length > 50 ? item.name.slice(0, 50) : item.name}
 					        </td>
-					        <td class="whitespace-nowrap px-4 py-2 text-gray-700">${item.original_price}</td>
 					        <td class="whitespace-nowrap px-4 py-2 text-gray-700">${item.new_price}</td>
 					        <td class="whitespace-nowrap px-4 py-2 text-gray-700">
 					        	<img src="${item.images}" width="100px"/>
 					        </td>
-
 							<td class="whitespace-nowrap px-4 py-2">
 						      <button
-						      	data-id="${index}"
+						      	data-id="${item.id}"
 						        class="btn-delete inline-block rounded bg-indigo-600 px-4 py-2 hover:bg-red-500 text-xs font-medium text-white hover:bg-indigo-700"
 						      >
-						        Delete
+						        Bỏ chọn
 						      </button>
 						    </td>
+					        <td class="whitespace-nowrap px-4 py-2 text-gray-700">${item.quantity}
+					        </td>
 					      </tr>
 		    		`
 		    	}).join('')

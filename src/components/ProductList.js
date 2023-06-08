@@ -24,7 +24,7 @@ const ProductList = ({ book: { id, name, images, original_price, new_price, quan
             <div class="mt-2">
             	<span class="flex items-center ">Đánh giá: ${rating_average} ${star}</span> 
             </div>
-            <button class="btn-orederOut inline-block rounded bg-indigo-600 px-4 py-2 hover:bg-red-500 text-xs font-medium text-white hover:bg-indigo-700" data-id="${id}">Add to card</button>
+            <a href="${`/product/${id}`}" class="btn-orederOut inline-block rounded bg-indigo-600 px-4 py-2 hover:bg-red-500 text-xs font-medium text-white hover:bg-indigo-700">Add to card</a>
         </div>
     </div>     
     `

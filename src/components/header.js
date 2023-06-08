@@ -25,7 +25,7 @@ const Header = function(title, name) {
 					<a href="/product" class="flex justify-center" data-navigo>${list}Product</a>
 				</button>
 				<button class="h-10 w-[120px] text-center px-2 rounded-lg bg-transparent border-2 outline-none hover:bg-neutral-700 hover:text-white">
-					<a href="/about" class="flex justify-center">${about}Sign In</a>
+					<a href="/signin" class="flex justify-center">${about}Sign In</a>
 				</button>
 				<button class="h-10 w-[120px] text-center px-2 ml-2 rounded-lg bg-transparent border-2 outline-none hover:bg-neutral-700 hover:text-white">
 					<a href="/cart" class="flex justify-center">${cart}Cart</a>

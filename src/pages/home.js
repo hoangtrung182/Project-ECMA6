@@ -5,6 +5,7 @@ import { star, addDot } from '../components/logo.js';
 import { useState, useEffect } from '../lib';
 import { getProducts } from '../api/products.js';
 import { Cart } from '../api/oop.js';
+import { addProductCart } from '../api/cart.js';
 
 
 const Home = () => {
@@ -107,11 +108,20 @@ const Home = () => {
 		const trung = new Cart();
 
 		const container = document.querySelector('.homeContainer');
-		container.addEventListener('click', function(e) {
+		container.addEventListener('click',async function(e) {
 			if(e.target.classList.contains('btn-orederOut')) {
 				const { id } = e.target.dataset;
-				trung.addProduct(data, +id);
-				sessionStorage.setItem('products', JSON.stringify(trung.cart))
+				// trung.addProduct(data, +id);
+				// sessionStorage.setItem('products', JSON.stringify(trung.cart))
+
+				// const selectedProduct = data.find(item => item.id === +id);
+				// try {
+				// 	await addProductCart(selectedProduct);
+				// 	alert('Add product seccesfully');
+				// 	// console.log('Thanh cong')
+				// } catch(err) {
+				// 	console.log(err)
+				// }
 			}
 		})
 	}, )

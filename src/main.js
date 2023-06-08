@@ -14,6 +14,7 @@ export const app = document.querySelector('#app');
 router.on('/', () => render(Home, app));
 router.on('/product', () => render(Home, app));
 router.on('/cart', () => render(CartOrder, app));
+router.on('/signin', () => render(NotFoundPage, app));
 router.on('/product/:id', ({ data }) => render(() => ProductDetail(data), app))
 
 
